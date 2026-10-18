@@ -6,6 +6,7 @@ let currentStage = 1;
 
 // DOM Elements
 const carouselTrack = document.getElementById("carousel-track");
+const carouselTrackContainer = document.querySelector(".carousel-track-container");
 const carouselDots = document.getElementById("carousel-dots");
 const btnPrev = document.getElementById("carousel-prev");
 const btnNext = document.getElementById("carousel-next");
@@ -308,11 +309,28 @@ function setLoading(button, isLoading) {
 function bindEvents() {
   // Carousel scroll buttons
   btnPrev.addEventListener("click", () => {
-    carouselTrack.scrollBy({ left: -320, behavior: "smooth" });
+    const card = carouselTrack.querySelector(".concept-card");
+    const scrollDist = card ? (card.offsetWidth + 16) : 340;
+    carouselTrackContainer.scrollBy({ left: -scrollDist, behavior: "smooth" });
   });
   btnNext.addEventListener("click", () => {
-    carouselTrack.scrollBy({ left: 320, behavior: "smooth" });
+    const card = carouselTrack.querySelector(".concept-card");
+    const scrollDist = card ? (card.offsetWidth + 16) : 340;
+    carouselTrackContainer.scrollBy({ left: scrollDist, behavior: "smooth" });
   });
+
+  // Keep dots updated on manual scroll
+  carouselTrackContainer.addEventListener("scroll", () => {
+    const cards = carouselTrack.querySelectorAll(".concept-card");
+    const dots = carouselDots.querySelectorAll(".dot");
+    const scrollPos = carouselTrackContainer.scrollLeft;
+
+    cards.forEach((card, index) => {
+      if (Math.abs(card.offsetLeft - scrollPos) < (card.offsetWidth / 2 + 20)) {
+        dots.forEach((d, i) => d.classList.toggle("active", i === index));
+      }
+    });
+  }, { passive: true });
 
   // Stage navigation buttons
   document.getElementById("btn-back-to-1").addEventListener("click", () => goToStage(1));
