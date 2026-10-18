@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SumJ (समझे) — Engineering Concept Mastery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <div class="brand-text">
+          <h1>SumJ <span class="hindi-text">(समझे)</span></h1>
+          <p class="tagline">Socratic Engineering Comprehension Engine</p>
+        </div>
+      </div>
+      <div class="header-badge">100x Module 2</div>
+    </header>
+
+    <!-- Stepper Progress Tracker -->
+    <nav class="stepper" aria-label="Mastery Progress">
+      <div class="step-item active" id="step-nav-1">
+        <div class="step-num">1</div>
+        <span>Select Concept</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="step-nav-2">
+        <div class="step-num">2</div>
+        <span>Explain & Probe</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="step-nav-3">
+        <div class="step-num">3</div>
+        <span>Case Challenge</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="step-nav-4">
+        <div class="step-num">4</div>
+        <span>Evaluation</span>
+      </div>
+    </nav>
+
+    <!-- Main Dynamic Container -->
+    <main class="main-card">
+
+      <!-- STAGE 1: CONCEPT CAROUSEL -->
+      <section id="stage-1" class="stage-section active">
+        <div class="section-intro">
+          <h2>Select a Fundamental Concept</h2>
+          <p>Choose an architecture or protocol concept below to test your intuitive understanding.</p>
+        </div>
+
+        <div class="carousel-wrapper">
+          <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous concept">‹</button>
+          <div class="carousel-track-container">
+            <div class="carousel-track" id="carousel-track">
+              <!-- Dynamically populated from /api/concepts -->
+              <div class="loading-state">Loading concepts...</div>
+            </div>
+          </div>
+          <button class="carousel-arrow next" id="carousel-next" aria-label="Next concept">›</button>
+        </div>
+
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </section>
+
+      <!-- STAGE 2: INITIAL EXPLANATION & SOCRATIC PROBE -->
+      <section id="stage-2" class="stage-section hidden">
+        <div class="active-concept-pill">
+          <span class="pill-badge" id="stage2-concept-id">C01</span>
+          <span class="pill-title" id="stage2-concept-title">Why does a backend exist at all?</span>
+        </div>
+
+        <div class="prompt-box">
+          <label for="initial-explanation-input">
+            <h3>Explain this in your own words:</h3>
+            <p>Avoid memorized textbook jargon. Describe the physical mechanism and trade-offs.</p>
+          </label>
+          <textarea id="initial-explanation-input" rows="4"
+            placeholder="In your own words, why does this happen?"></textarea>
+
+          <div class="action-row">
+            <button class="btn btn-secondary" id="btn-back-to-1">Back</button>
+            <button class="btn btn-primary" id="btn-submit-initial">
+              <span class="btn-text">Analyze Understanding</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Socratic Feedback Panel (Revealed after Probe) -->
+        <div id="probe-feedback-panel" class="probe-panel hidden">
+          <div class="probe-header">
+            <span class="probe-badge">SumJ Socratic Feedback</span>
+          </div>
+
+          <div id="jargon-container" class="jargon-box hidden">
+            <span class="jargon-label">Detected Recitation / Fillers:</span>
+            <div class="tags-list" id="jargon-tags"></div>
+          </div>
+
+          <div class="critique-box">
+            <strong>Mentor Critique:</strong>
+            <p id="critique-text"></p>
+          </div>
+
+          <div class="socratic-challenge">
+            <div class="challenge-icon">🎯</div>
+            <div class="challenge-content">
+              <strong>Socratic Follow-up Question:</strong>
+              <p id="socratic-question-text"></p>
+            </div>
+          </div>
+
+          <div class="followup-answer-box">
+            <label for="followup-input">
+              <strong>Your Response to the Socratic Question:</strong>
+            </label>
+            <textarea id="followup-input" rows="3"
+              placeholder="Explain the specific mechanism or edge case asked above..."></textarea>
+
+            <button class="btn btn-primary" id="btn-proceed-to-case">
+              <span>Continue to Case Challenge →</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 3: THE REAL-WORLD CASE CHALLENGE -->
+      <section id="stage-3" class="stage-section hidden">
+        <div class="active-concept-pill">
+          <span class="pill-badge" id="stage3-concept-id">C01</span>
+          <span class="pill-title" id="stage3-concept-title">Concept Challenge</span>
+        </div>
+
+        <div class="case-card">
+          <div class="case-card-header">
+            <span class="case-badge" id="case-id-badge">CASE STUDY</span>
+            <span class="case-subtext">Real-World Engineering Scenario</span>
+          </div>
+          <p class="case-scenario-text" id="case-scenario-text">Loading scenario...</p>
+        </div>
+
+        <div class="prompt-box">
+          <label for="case-explanation-input">
+            <h3>Explain the Rationale / Mechanical Solution:</h3>
+            <p>How does the system behave, and why? Be specific about where computation happens.</p>
+          </label>
+          <textarea id="case-explanation-input" rows="5"
+            placeholder="Detail the exact sequence of events, failure modes, or architectural rationale..."></textarea>
+
+          <div class="action-row">
+            <button class="btn btn-secondary" id="btn-back-to-2">Back</button>
+            <button class="btn btn-primary" id="btn-submit-case">
+              <span class="btn-text">Submit for Dual Evaluation</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 4: DUAL EVALUATION SCORECARD -->
+      <section id="stage-4" class="stage-section hidden">
+
+        <!-- Final Mastered Banner -->
+        <div id="verdict-banner" class="verdict-banner passed">
+          <div class="verdict-icon" id="verdict-icon">🏆</div>
+          <div class="verdict-details">
+            <h2 id="verdict-title">Concept Mastered!</h2>
+            <p id="verdict-subtitle">Both keyword precision and semantic reasoning criteria satisfied.</p>
+          </div>
+        </div>
+
+        <!-- Dual Evaluation Grid -->
+        <div class="eval-grid">
+
+          <!-- EVALUATION A -->
+          <div class="eval-card" id="card-eval-a">
+            <div class="eval-card-header">
+              <span class="eval-tag">EVALUATION A</span>
+              <span class="status-indicator" id="eval-a-status">✅ Passed</span>
+            </div>
+            <h4>Keyword & Synonym Alignment</h4>
+            <p class="eval-desc">Deterministic check against required concept vocabulary groups.</p>
+
+            <div class="eval-detail-block">
+              <div class="label-row">
+                <span>Matched Concepts:</span>
+                <strong id="eval-a-ratio">2/3</strong>
+              </div>
+              <div class="tags-list" id="eval-a-matched-tags"></div>
+            </div>
+
+            <div class="eval-detail-block" id="eval-a-missing-block">
+              <div class="label-row">
+                <span>Missing Vocabulary Areas:</span>
+              </div>
+              <div class="tags-list missing" id="eval-a-missing-tags"></div>
+            </div>
+          </div>
+
+          <!-- EVALUATION B -->
+          <div class="eval-card" id="card-eval-b">
+            <div class="eval-card-header">
+              <span class="eval-tag">EVALUATION B</span>
+              <span class="status-indicator" id="eval-b-status">✅ Passed</span>
+            </div>
+            <h4>Semantic Reasoning</h4>
+            <p class="eval-desc">Groq LLM deep assessment of technical causality and engineering constraints.</p>
+
+            <div class="eval-detail-block">
+              <strong>Examiner Notes:</strong>
+              <p class="eval-reasoning" id="eval-b-reasoning"></p>
+            </div>
+
+            <div class="eval-detail-block" id="eval-b-gaps-block">
+              <strong>Gaps Identified:</strong>
+              <ul class="gaps-list" id="eval-b-gaps-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="scorecard-actions">
+          <button class="btn btn-secondary" id="btn-retry-case">Try Another Case for This Concept</button>
+          <button class="btn btn-primary" id="btn-restart">Explore Other Concepts</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,874 @@
+{
+  "concept": [
+    {
+      "ID": "C01",
+      "concept_question": "Why does a backend exist at all?"
+    },
+    {
+      "ID": "C02",
+      "concept_question": "What does one API call carry?"
+    },
+    {
+      "ID": "C03",
+      "concept_question": "Why can’t the key live in the browser?"
+    },
+    {
+      "ID": "C04",
+      "concept_question": "Why does the app forget without storage?"
+    },
+    {
+      "ID": "C05",
+      "concept_question": "Why does the pointer sit on the many side?"
+    },
+    {
+      "ID": "C06",
+      "concept_question": "Why is history a row, not a cell?"
+    },
+    {
+      "ID": "C07",
+      "concept_question": "How do you decide where a piece lives?"
+    }
+  ],
+  "case": [
+    {
+      "ID": "CS001",
+      "concept_ID": "C01",
+      "case_scenario": "A user wants to update their account subscription tier to 'Paid' via your web app. Why can't the frontend JavaScript code directly update the database row from tier: free to tier: paid?",
+      "case_answer": "Because the client environment is untrusted; any user could modify the local client code or network payload to grant themselves paid access without executing payment logic.",
+      "case_answer_keywords": ["untrusted client", "modify payload", "bypass payment"],
+      "case_answer_kw_synonym": [
+        ["browser", "frontend", "user machine", "inspect element", "untrusted client"],
+        ["tamper", "edit", "rewrite", "forge", "alter", "modify payload"],
+        ["skip validation", "free access", "unauthorized update", "bypass payment"]
+      ]
+    },
+    {
+      "ID": "CS002",
+      "concept_ID": "C01",
+      "case_scenario": "An e-commerce React app calculates the cart total and applies a 90% discount code inside the browser before sending the final dollar amount directly to the payment gateway. What breaks mechanically?",
+      "case_answer": "Because calculation happens on an untrusted client, a user can edit the local JavaScript state or intercept the network request to set the final price to $0.01 without a valid discount.",
+      "case_answer_keywords": ["client-side calculation", "intercept request", "manipulate price"],
+      "case_answer_kw_synonym": [
+        ["frontend math", "browser state", "local variable", "client-side calculation"],
+        ["modify payload", "tamper", "devtools", "proxy", "intercept request"],
+        ["change total", "override amount", "arbitrary price", "manipulate price"]
+      ]
+    },
+    {
+      "ID": "CS003",
+      "concept_ID": "C01",
+      "case_scenario": "A multiplayer trivia game checks if the user's selected answer matches the correct answer inside the browser JavaScript and then sends score + 10 to the leaderboard database. How is this exploited?",
+      "case_answer": "The correct answers are shipped inside the client bundle where users can read them in DevTools, or users can send raw HTTP requests directly incrementing their score without playing.",
+      "case_answer_keywords": ["client bundle exposure", "raw request", "forge score"],
+      "case_answer_kw_synonym": [
+        ["source code", "inspect", "network tab", "frontend state", "client bundle exposure"],
+        ["curl", "direct api call", "replay", "raw request"],
+        ["fake points", "increment directly", "bypass game", "forge score"]
+      ]
+    },
+    {
+      "ID": "CS004",
+      "concept_ID": "C01",
+      "case_scenario": "You want to limit free-tier users to 5 AI image generations per day by keeping a counter in browser localStorage and blocking the button after 5 clicks. Why does this fail to protect your API quota?",
+      "case_answer": "The rate limit runs on the user's machine; a user can clear localStorage, open an incognito window, or call the endpoint directly via terminal to bypass the client-side counter.",
+      "case_answer_keywords": ["clear localStorage", "client-side counter", "bypass limit"],
+      "case_answer_kw_synonym": [
+        ["delete storage", "reset state", "incognito", "local state", "clear localstorage"],
+        ["browser check", "ui disabled button", "client-side counter"],
+        ["unlimited requests", "direct call", "ignore quota", "bypass limit"]
+      ]
+    },
+    {
+      "ID": "CS005",
+      "concept_ID": "C01",
+      "case_scenario": "Your frontend connects directly to a PostgreSQL database using a read-only connection string so users can view their own profile row (WHERE user_id = 5). How can User 5 read User 6's private profile?",
+      "case_answer": "Because the query is constructed on the client, User 5 can modify the SQL query string in the browser before it executes to WHERE user_id = 6 or drop the WHERE clause entirely.",
+      "case_answer_keywords": ["client query construction", "modify SQL", "unauthorized read"],
+      "case_answer_kw_synonym": [
+        ["frontend database connection", "browser query", "client query construction"],
+        ["change where clause", "alter query", "tamper parameter", "modify sql"],
+        ["dump table", "view other users", "data leak", "unauthorized read"]
+      ]
+    },
+    {
+      "ID": "CS006",
+      "concept_ID": "C01",
+      "case_scenario": "A banking web app hides the 'Approve Wire Transfer' button in the React UI using {user.isAdmin && <Button/>}. If there is no backend server checking the role, what happens when a regular user wants to approve a transfer?",
+      "case_answer": "Hiding a UI element only affects the DOM rendering; a regular user can unhide the button in DevTools or send the underlying HTTP request directly to trigger the action without authorization.",
+      "case_answer_keywords": ["UI hiding only", "untrusted DOM", "direct request"],
+      "case_answer_kw_synonym": [
+        ["css display", "react conditional", "frontend check", "ui hiding only"],
+        ["inspect element", "modify state", "set isadmin true", "untrusted dom"],
+        ["curl", "trigger endpoint", "bypass role check", "direct request"]
+      ]
+    },
+    {
+      "ID": "CS007",
+      "concept_ID": "C01",
+      "case_scenario": "An auction platform uses the user's browser new Date() timestamp to verify whether a bid was submitted before the 12:00 PM deadline. How can a bidder submit a winning bid at 12:05 PM?",
+      "case_answer": "The browser reads the operating system's local clock; the user can manually roll back their computer's system time to 11:59 AM so the client generates a falsified timestamp.",
+      "case_answer_keywords": ["system clock manipulation", "client timestamp", "spoof time"],
+      "case_answer_kw_synonym": [
+        ["os time", "local clock", "computer date", "system clock manipulation"],
+        ["new date()", "browser time", "untrusted clock", "client timestamp"],
+        ["roll back time", "fake deadline", "forge timestamp", "spoof time"]
+      ]
+    },
+    {
+      "ID": "CS008",
+      "concept_ID": "C01",
+      "case_scenario": "A content platform blurs premium articles using CSS and relies on frontend code to strip the blur only if the user's account status is subscribed. Why can non-subscribers read the article for free?",
+      "case_answer": "The full unredacted text of the article was already transmitted over the network into the browser DOM; anyone can open Inspect Element and delete the CSS blur class or read the raw JSON response.",
+      "case_answer_keywords": ["full data transmitted", "DOM inspection", "remove CSS"],
+      "case_answer_kw_synonym": [
+        ["sent over network", "payload contains text", "client memory", "full data transmitted"],
+        ["devtools", "view source", "network response", "dom inspection"],
+        ["delete blur class", "unhide text", "bypass paywall", "remove css"]
+      ]
+    },
+    {
+      "ID": "CS009",
+      "concept_ID": "C01",
+      "case_scenario": "Two users try to buy the last remaining concert ticket at the exact same millisecond. Why can't two separate browsers coordinate who gets the ticket without a central backend?",
+      "case_answer": "Browsers run in isolated client environments with no shared memory or atomic locking mechanism; only a centralized server/database can serialize concurrent requests and lock the inventory row.",
+      "case_answer_keywords": ["isolated clients", "no atomic lock", "race condition"],
+      "case_answer_kw_synonym": [
+        ["separate browsers", "no shared state", "distributed clients", "isolated clients"],
+        ["concurrency control", "serialization", "transaction lock", "no atomic lock"],
+        ["double booking", "overselling", "simultaneous write", "race condition"]
+      ]
+    },
+    {
+      "ID": "CS010",
+      "concept_ID": "C01",
+      "case_scenario": "A file-upload form checks in JavaScript that a file ends in .png and is under 2MB before uploading it directly to a public cloud bucket. How can an attacker upload a 5GB .exe malware file?",
+      "case_answer": "Client-side file validation only runs inside the browser UI; an attacker can bypass the browser form entirely and send a multipart HTTP POST request directly to the storage URL.",
+      "case_answer_keywords": ["bypass browser form", "client validation only", "direct upload"],
+      "case_answer_kw_synonym": [
+        ["skip ui check", "ignore js filter", "bypass browser form"],
+        ["frontend file check", "extension check", "client validation only"],
+        ["raw post request", "curl upload", "unverified payload", "direct upload"]
+      ]
+    },
+    {
+      "ID": "CS011",
+      "concept_ID": "C02",
+      "case_scenario": "Your frontend needs to send a user's ID (42) and a new display name ('Pavan') to the server. Exactly how is this bundled and transmitted across the network socket?",
+      "case_answer": "It is serialized into an HTTP request containing a method (PATCH/POST), a route path (/api/user), headers (Content-Type: application/json, Authorization), and a serialized JSON body payload ({\"id\": 42, \"name\": \"Pavan\"}).",
+      "case_answer_keywords": ["serialized HTTP request", "method and path", "headers and body"],
+      "case_answer_kw_synonym": [
+        ["packaged", "text stream", "tcp socket", "serialized http request"],
+        ["patch", "post", "put", "endpoint url", "route", "method and path"],
+        ["content-type", "json payload", "key-value string", "headers and body"]
+      ]
+    },
+    {
+      "ID": "CS012",
+      "concept_ID": "C02",
+      "case_scenario": "A library app sends a request to mark a book as checked out. It includes the HTTP method and a JSON payload {\"status\": \"checked_out\"}, but has no URL or endpoint path. What is the receiving service unable to do?",
+      "case_answer": "The server cannot locate the target resource or route handler to apply the action to, resulting in a routing failure (such as a 404 Not Found or malformed request).",
+      "case_answer_keywords": ["locate resource", "missing route path", "routing failure"],
+      "case_answer_kw_synonym": [
+        ["find endpoint", "identify target", "match handler", "locate resource"],
+        ["no url", "missing uri", "no destination", "missing route path"],
+        ["404 not found", "unroutable", "unknown endpoint", "routing failure"]
+      ]
+    },
+    {
+      "ID": "CS013",
+      "concept_ID": "C02",
+      "case_scenario": "A client sends an HTTP request to /api/orders/99 with valid headers and path, but omits the HTTP method (verb) entirely. What mechanical ambiguity does the server face?",
+      "case_answer": "The server knows which resource (/api/orders/99) is targeted, but lacks the action verb (GET, DELETE, PATCH) to determine whether to read, modify, or delete that record.",
+      "case_answer_keywords": ["missing HTTP verb", "ambiguous action", "operation unknown"],
+      "case_answer_kw_synonym": [
+        ["no method", "missing get/post/delete", "missing http verb"],
+        ["what to do", "intended operation", "crud action", "ambiguous action"],
+        ["cannot dispatch handler", "405 method not allowed", "bad request", "operation unknown"]
+      ]
+    },
+    {
+      "ID": "CS014",
+      "concept_ID": "C02",
+      "case_scenario": "Your frontend sends fetch('/api/items', { method: 'POST', body: JSON.stringify({ name: 'Book' }) }) without setting the Content-Type: application/json header. Why does the backend parser see req.body as empty or raw text?",
+      "case_answer": "Without the Content-Type metadata header, the server does not know the byte stream in the body is JSON-formatted and fails to trigger its JSON deserialization middleware.",
+      "case_answer_keywords": ["missing Content-Type header", "raw byte stream", "deserialization failure"],
+      "case_answer_kw_synonym": [
+        ["no mime type", "missing metadata", "application/json", "missing content-type header"],
+        ["unparsed text", "raw string", "buffer", "raw byte stream"],
+        ["json parser skipped", "req.body undefined", "cannot parse", "deserialization failure"]
+      ]
+    },
+    {
+      "ID": "CS015",
+      "concept_ID": "C02",
+      "case_scenario": "A user is logged in, and the frontend sends DELETE /api/posts/12 with only the method and path. Why does the server reject the request with 401 Unauthorized even though the user logged in 10 seconds ago?",
+      "case_answer": "HTTP requests are independent and stateless; unless this specific request carries credentials in its headers (like an Authorization: Bearer token or Cookie), the server cannot identify the caller.",
+      "case_answer_keywords": ["stateless HTTP", "missing auth header", "caller unidentified"],
+      "case_answer_kw_synonym": [
+        ["independent request", "no memory between calls", "stateless http"],
+        ["no bearer token", "missing cookie", "no credentials", "missing auth header"],
+        ["401 unauthorized", "anonymous request", "unknown identity", "caller unidentified"]
+      ]
+    },
+    {
+      "ID": "CS016",
+      "concept_ID": "C02",
+      "case_scenario": "You try to pass a JavaScript object { count: 5 } directly over a network socket without calling JSON.stringify(). Why can't the network wire transport a live JavaScript object?",
+      "case_answer": "A live JavaScript object is an in-memory pointer structure inside the browser's RAM; network sockets only transmit flat sequences of bytes (serialized strings/binary), requiring serialization first.",
+      "case_answer_keywords": ["in-memory pointer", "byte stream only", "requires serialization"],
+      "case_answer_kw_synonym": [
+        ["ram reference", "live js object", "memory address", "in-memory pointer"],
+        ["raw bytes", "text over wire", "tcp packets", "byte stream only"],
+        ["stringify", "serialize", "flatten to string", "requires serialization"]
+      ]
+    },
+    {
+      "ID": "CS017",
+      "concept_ID": "C02",
+      "case_scenario": "A GET /api/search request attempts to filter products by category and price range, but GET requests do not carry a body payload. Where in the API call package must those filter parameters travel?",
+      "case_answer": "They must be encoded into the URL path's query string (e.g., /api/search?category=shoes&max_price=100) or passed via custom request headers.",
+      "case_answer_keywords": ["URL query string", "no GET body", "encoded parameters"],
+      "case_answer_kw_synonym": [
+        ["query params", "url parameters", "after question mark", "url query string"],
+        ["empty payload", "get has no body", "no get body"],
+        ["key=value pairs", "uri encoding", "path string", "encoded parameters"]
+      ]
+    },
+    {
+      "ID": "CS018",
+      "concept_ID": "C02",
+      "case_scenario": "The server finishes processing a POST /api/users call and sends a response back with body {\"error\": \"Email already exists\"}, but sets the HTTP status code to 200 OK. Why does the frontend's .catch() block fail to trigger?",
+      "case_answer": "The client checks the response's numeric HTTP status code metadata (expecting 4xx/5xx for errors) before parsing the body text; a 200 status signals protocol-level success regardless of the JSON text inside.",
+      "case_answer_keywords": ["status code metadata", "200 signals success", "body ignored by protocol"],
+      "case_answer_kw_synonym": [
+        ["http status header", "4xx/5xx vs 200", "status code metadata"],
+        ["treated as ok", "resolved promise", "no error flag", "200 signals success"],
+        ["client checks status first", "semantic mismatch", "body ignored by protocol"]
+      ]
+    },
+    {
+      "ID": "CS019",
+      "concept_ID": "C02",
+      "case_scenario": "A frontend on https://app.com calls https://api.other.com/data. The browser sends an automatic OPTIONS preflight call first. What metadata is the browser exchanging before sending the actual payload?",
+      "case_answer": "It exchanges CORS headers (Origin, Access-Control-Allow-Origin, Access-Control-Allow-Methods) to verify if the target server permits cross-origin requests from that specific domain.",
+      "case_answer_keywords": ["CORS headers", "Origin metadata", "preflight permission check"],
+      "case_answer_kw_synonym": [
+        ["access-control-allow-origin", "cross-origin headers", "cors headers"],
+        ["requesting domain", "source origin", "origin metadata"],
+        ["options request", "browser security check", "allowed methods", "preflight permission check"]
+      ]
+    },
+    {
+      "ID": "CS020",
+      "concept_ID": "C02",
+      "case_scenario": "A mobile app uploads a 10MB profile photo to /api/avatar. Why does sending it as a raw binary stream with Content-Length and multipart/form-data headers work better than embedding it inside a standard URL path?",
+      "case_answer": "URLs have strict length limits in HTTP headers/routers and only support ASCII characters, whereas the request body is designed to carry arbitrary-length binary byte chunks delineated by boundary headers.",
+      "case_answer_keywords": ["URL length limit", "binary byte stream", "request body payload"],
+      "case_answer_kw_synonym": [
+        ["uri size cap", "ascii restriction", "header limit", "url length limit"],
+        ["raw bytes", "file chunks", "multipart boundary", "binary byte stream"],
+        ["body carries bulk data", "binary payload", "request body payload"]
+      ]
+    },
+    {
+      "ID": "CS021",
+      "concept_ID": "C03",
+      "case_scenario": "A user opens your frontend web app, opens their browser's Network tab, and clicks a button that queries an external LLM provider. If your client-side code fetches directly with the key, what exact piece of data is exposed in plaintext?",
+      "case_answer": "The Authorization header containing the secret Bearer token/API key, allowing anyone to copy it and replay that exact request from a terminal using curl.",
+      "case_answer_keywords": ["Authorization header", "plaintext API key", "network tab inspection"],
+      "case_answer_kw_synonym": [
+        ["bearer token", "request header", "credential header", "authorization header"],
+        ["unencrypted secret", "visible key", "raw token", "plaintext api key"],
+        ["devtools", "inspect traffic", "copy as curl", "replay", "network tab inspection"]
+      ]
+    },
+    {
+      "ID": "CS022",
+      "concept_ID": "C03",
+      "case_scenario": "A developer hides their OpenAI API key inside a minified, obfuscated JavaScript file on the frontend so users can't easily read the source code. When a user clicks 'Generate', where specifically can any user still grab the plaintext key in 5 seconds?",
+      "case_answer": "In the browser's DevTools Network tab, because regardless of how obfuscated the code is, the browser must de-obfuscate the key in memory to attach it in plaintext to the outgoing HTTP request header.",
+      "case_answer_keywords": ["de-obfuscated at runtime", "outgoing HTTP header", "DevTools Network tab"],
+      "case_answer_kw_synonym": [
+        ["decrypted in memory", "evaluated by browser", "de-obfuscated at runtime"],
+        ["attached to fetch request", "authorization header", "outgoing http header"],
+        ["inspect network traffic", "view request headers", "devtools network tab"]
+      ]
+    },
+    {
+      "ID": "CS023",
+      "concept_ID": "C03",
+      "case_scenario": "Your teammate moves the API key out of the React code and puts it into a .env file in the frontend project using VITE_OPENAI_KEY. Why does this still expose the key to every user?",
+      "case_answer": "Frontend build tools (like Vite or Webpack) perform static string replacement at build time, baking the .env variable directly into the public JavaScript bundle shipped to the user's browser.",
+      "case_answer_keywords": ["build-time replacement", "baked into JS bundle", "shipped to browser"],
+      "case_answer_kw_synonym": [
+        ["static inline", "compiled into client code", "vite bundle", "build-time replacement"],
+        ["hardcoded in output", "public bundle", "client script", "baked into js bundle"],
+        ["downloaded by user", "visible in sources/network tab", "shipped to browser"]
+      ]
+    },
+    {
+      "ID": "CS024",
+      "concept_ID": "C03",
+      "case_scenario": "A developer encrypts the API key using AES encryption and puts the encrypted ciphertext inside the frontend code, alongside the decryption key and function so the browser can use it at runtime. Why is this useless?",
+      "case_answer": "Because both the lock (ciphertext) and the key (decryption secret/algorithm) are shipped to the same untrusted client machine, allowing any user to run the decryption function in the browser console or read the decrypted network call.",
+      "case_answer_keywords": ["decryption key on client", "untrusted execution", "decrypted in memory"],
+      "case_answer_kw_synonym": [
+        ["both lock and key shipped", "secret in bundle", "decryption key on client"],
+        ["console execution", "client-side decrypt", "breakpoint", "untrusted execution"],
+        ["plaintext at runtime", "exposed in network request", "decrypted in memory"]
+      ]
+    },
+    {
+      "ID": "CS025",
+      "concept_ID": "C03",
+      "case_scenario": "You restrict your third-party API key so it only accepts requests with the HTTP header Referer: https://your-app.com, and then put the key in your frontend code. How can an attacker still use your key from their own server?",
+      "case_answer": "The Referer and Origin headers are only enforced by browsers; an attacker can extract the key from your frontend and run a script from a terminal or backend server where they manually spoof the Referer header.",
+      "case_answer_keywords": ["spoof Referer header", "non-browser request", "extract key"],
+      "case_answer_kw_synonym": [
+        ["fake origin header", "forge http header", "spoof referer header"],
+        ["curl", "python script", "backend call", "outside browser", "non-browser request"],
+        ["copy key from client", "bypass domain restriction", "extract key"]
+      ]
+    },
+    {
+      "ID": "CS026",
+      "concept_ID": "C03",
+      "case_scenario": "Instead of hardcoding the key in the JavaScript bundle, your backend sends the raw OpenAI API key to the browser via a GET /api/get-secret-key call after the user logs in. Why is the key still compromised?",
+      "case_answer": "Even if only authenticated users receive it, once the key crosses the network boundary into a user's browser, that logged-in user can inspect the /api/get-secret-key response payload and steal the master key.",
+      "case_answer_keywords": ["crosses trust boundary", "response payload visible", "authenticated user steals key"],
+      "case_answer_kw_synonym": [
+        ["sent to client", "delivered to browser", "crosses trust boundary"],
+        ["network response body", "devtools preview", "response payload visible"],
+        ["any logged-in user can copy", "shared master credential", "authenticated user steals key"]
+      ]
+    },
+    {
+      "ID": "CS027",
+      "concept_ID": "C03",
+      "case_scenario": "A mobile app (iOS/Android) embeds a secret Stripe secret key inside its compiled binary instead of using a backend server, assuming mobile apps don't have a 'F12 Network Tab'. How is the key extracted?",
+      "case_answer": "Users can decompile the APK/IPA binary to read hardcoded strings, or route their phone's Wi-Fi traffic through a local MITM proxy (like Charles Proxy or Wireshark) to inspect the outgoing HTTP headers.",
+      "case_answer_keywords": ["decompile binary", "MITM proxy", "extract strings"],
+      "case_answer_kw_synonym": [
+        ["unpack apk", "reverse engineer app", "read binary strings", "decompile binary"],
+        ["charles proxy", "fiddler", "intercept traffic", "inspect packets", "mitm proxy"],
+        ["steal secret key", "view outgoing headers", "extract strings"]
+      ]
+    },
+    {
+      "ID": "CS028",
+      "concept_ID": "C03",
+      "case_scenario": "A developer stores the API key in an HttpOnly cookie thinking JavaScript can't read it, and tells the browser to call api.openai.com directly. Why does this fail both mechanically and security-wise?",
+      "case_answer": "HttpOnly cookies are only sent automatically to the domain that set them (not third-party APIs requiring an Authorization: Bearer header), and any cookie sent by the browser is still visible in the user's own DevTools Network/Application tab.",
+      "case_answer_keywords": ["visible in DevTools", "cookie domain scope", "header format mismatch"],
+      "case_answer_kw_synonym": [
+        ["application tab", "network tab shows cookie header", "visible in devtools"],
+        ["same-origin cookie", "not sent as bearer token", "cookie domain scope"],
+        ["user owns the browser", "client can still read own cookies", "header format mismatch"]
+      ]
+    },
+    {
+      "ID": "CS029",
+      "concept_ID": "C03",
+      "case_scenario": "You push your frontend code containing the API key to a private GitHub repository and deploy it to Vercel. Even though the repo is private, how can a random visitor on your live website get the key?",
+      "case_answer": "A private Git repo only hides the source code before deployment; once deployed, Vercel serves the compiled JavaScript files publicly over HTTP to any browser that visits the URL.",
+      "case_answer_keywords": ["publicly served bundle", "deployment exposes assets", "browser downloads JS"],
+      "case_answer_kw_synonym": [
+        ["live site serves files", "public http assets", "publicly served bundle"],
+        ["private repo doesn't hide client code", "deployment exposes assets"],
+        ["view source", "sources tab", "downloaded bundle", "browser downloads js"]
+      ]
+    },
+    {
+      "ID": "CS030",
+      "concept_ID": "C03",
+      "case_scenario": "Your frontend uses a Firebase/Supabase key directly in the browser. When is a client-side key actually safe to expose in the browser?",
+      "case_answer": "Only when it is a public/anon identifier paired with strict server-side Row Level Security (RLS) rules, meaning the key itself grants zero administrative privileges and the backend database enforces per-user permissions.",
+      "case_answer_keywords": ["public anon identifier", "server-side RLS", "zero admin privilege"],
+      "case_answer_kw_synonym": [
+        ["publishable key", "non-secret id", "public token", "public anon identifier"],
+        ["row level security", "database policy enforcement", "backend rules", "server-side rls"],
+        ["scoped permissions", "cannot bypass server checks", "zero admin privilege"]
+      ]
+    },
+    {
+      "ID": "CS031",
+      "concept_ID": "C04",
+      "case_scenario": "A user fills out a multi-step form, reaches step 3, and accidentally refreshes the browser tab. Why does the form reset to step 1 if you haven't written code for database or local storage?",
+      "case_answer": "The browser tab's RAM wiped the active execution context upon reloading, destroying all JavaScript state variables that existed only in volatile memory.",
+      "case_answer_keywords": ["volatile RAM wiped", "execution context destroyed", "in-memory variables cleared"],
+      "case_answer_kw_synonym": [
+        ["browser memory cleared", "heap reset", "temporary memory", "volatile ram wiped"],
+        ["page reload resets js runtime", "tab refresh", "execution context destroyed"],
+        ["state lost", "not written to disk", "in-memory variables cleared"]
+      ]
+    },
+    {
+      "ID": "CS032",
+      "concept_ID": "C04",
+      "case_scenario": "Your Node.js backend stores all newly registered users inside a global array const users = []. When you deploy a tiny bug fix and the server process restarts, why can't any existing user log in?",
+      "case_answer": "The users array lived in the Node.js process's volatile RAM; terminating and restarting the OS process deallocates that memory space, wiping the array back to [] because nothing was written to non-volatile disk.",
+      "case_answer_keywords": ["process RAM deallocated", "volatile memory", "not persisted to disk"],
+      "case_answer_kw_synonym": [
+        ["in-memory array wiped", "heap cleared on restart", "process ram deallocated"],
+        ["temporary ram", "process termination", "volatile memory"],
+        ["no database write", "reset to empty array", "non-volatile storage missing", "not persisted to disk"]
+      ]
+    },
+    {
+      "ID": "CS033",
+      "concept_ID": "C04",
+      "case_scenario": "Inside an Express route handler app.post('/count', (req, res) => { let count = 0; count++; }), why does every single API call return 1 instead of incrementing 2, 3, 4?",
+      "case_answer": "Local variables declared inside a function are allocated on the call stack when the request starts and garbage-collected the moment the function returns the response.",
+      "case_answer_keywords": ["function scope lifecycle", "garbage collected", "call stack deallocation"],
+      "case_answer_kw_synonym": [
+        ["local variable destroyed", "request-scoped memory", "function scope lifecycle"],
+        ["re-initialized on every call", "wiped after return", "garbage collected"],
+        ["no state persistence across requests", "call stack deallocation"]
+      ]
+    },
+    {
+      "ID": "CS034",
+      "concept_ID": "C04",
+      "case_scenario": "You move let count = 0 to the top of your backend file (global memory) and run 4 instances of your server behind a load balancer. Why does a user see the counter jump randomly between 1, 4, and 2 on consecutive refreshes?",
+      "case_answer": "Each server instance runs in its own isolated OS process with separate RAM; without a shared external storage layer (like Redis or a database), each process only increments its own private in-memory variable.",
+      "case_answer_keywords": ["isolated process RAM", "no shared memory", "per-instance state"],
+      "case_answer_kw_synonym": [
+        ["separate server memory", "independent processes", "isolated process ram"],
+        ["load balancer hits different ram", "uncoordinated state", "no shared memory"],
+        ["needs centralized storage", "external database/redis", "per-instance state"]
+      ]
+    },
+    {
+      "ID": "CS035",
+      "concept_ID": "C04",
+      "case_scenario": "A serverless function (like AWS Lambda or Vercel Functions) stores a user's session in a global variable. Why does the session randomly disappear after 10 minutes of inactivity?",
+      "case_answer": "Serverless environments freeze and spin down idle containers to save compute resources, deallocating the container's RAM; the next request triggers a cold start with a brand-new memory space.",
+      "case_answer_keywords": ["container spin down", "cold start", "ephemeral compute memory"],
+      "case_answer_kw_synonym": [
+        ["serverless lifecycle", "instance destroyed when idle", "container spin down"],
+        ["fresh memory allocation", "ram wiped", "cold start"],
+        ["stateless worker", "volatile container", "ephemeral compute memory"]
+      ]
+    },
+    {
+      "ID": "CS036",
+      "concept_ID": "C04",
+      "case_scenario": "A user adds 3 items to their shopping cart stored in React useState([]), then copies the URL and pastes it into a new browser tab. Why is the cart empty in the new tab?",
+      "case_answer": "React useState allocates memory strictly inside the isolated JavaScript heap of the first browser tab; a new tab spawns a completely separate process and memory space with no access to the first tab's RAM.",
+      "case_answer_keywords": ["isolated tab memory", "separate JS heap", "no cross-tab persistence"],
+      "case_answer_kw_synonym": [
+        ["tab-specific ram", "sandboxed execution context", "isolated tab memory"],
+        ["new process spawned", "fresh react state", "separate js heap"],
+        ["not in localstorage/db", "memory not shared", "no cross-tab persistence"]
+      ]
+    },
+    {
+      "ID": "CS037",
+      "concept_ID": "C04",
+      "case_scenario": "Your backend writes uploaded files to the container's local /tmp folder on Render or Heroku. Why do all user avatars vanish the next day even though fs.writeFileSync wrote them to a file path?",
+      "case_answer": "Cloud containers use an ephemeral filesystem that is recreated from the base build image on every deploy or daily container cycle, wiping any files not sent to persistent object storage (like S3) or a mounted volume.",
+      "case_answer_keywords": ["ephemeral filesystem", "container rebuild wipes disk", "no external object storage"],
+      "case_answer_kw_synonym": [
+        ["temporary container disk", "reset to base image", "ephemeral filesystem"],
+        ["redeploy destroys local files", "non-persistent volume", "container rebuild wipes disk"],
+        ["needs s3/persistent volume", "ephemeral storage", "no external object storage"]
+      ]
+    },
+    {
+      "ID": "CS038",
+      "concept_ID": "C04",
+      "case_scenario": "A React component fetches a list of comments and stores them in component state. When the user clicks to the 'Profile' tab and clicks back to 'Comments', why did the comments disappear until a new fetch ran?",
+      "case_answer": "Unmounting the React component destroys its instance in the virtual DOM and garbage-collects its local state hook memory from RAM.",
+      "case_answer_keywords": ["component unmount", "local state garbage collected", "instance destroyed"],
+      "case_answer_kw_synonym": [
+        ["removed from dom", "lifecycle teardown", "component unmount"],
+        ["hook memory freed", "ram cleared", "local state garbage collected"],
+        ["re-mount initializes empty state", "instance destroyed"]
+      ]
+    },
+    {
+      "ID": "CS039",
+      "concept_ID": "C04",
+      "case_scenario": "You run a SQLite database configured with :memory: mode during testing. What happens to all inserted rows the microsecond your test script finishes executing?",
+      "case_answer": "SQLite :memory: creates the tables entirely inside the process's volatile RAM rather than flushing pages to a .db file on disk, so OS memory reclamation erases the database upon process exit.",
+      "case_answer_keywords": ["in-memory database", "no disk flush", "erased on process exit"],
+      "case_answer_kw_synonym": [
+        ["ram-only tables", "volatile memory mode", "in-memory database"],
+        ["no file written to hard drive", "no persistence", "no disk flush"],
+        ["os reclaims memory", "process termination wipes data", "erased on process exit"]
+      ]
+    },
+    {
+      "ID": "CS040",
+      "concept_ID": "C04",
+      "case_scenario": "A user types a long essay into an HTML <textarea> without any JavaScript attached, and their laptop battery suddenly dies. Why is the text gone when they boot back up?",
+      "case_answer": "The typed characters were held exclusively in the browser's volatile DOM memory inside physical RAM, which requires continuous electrical current to maintain its state and vanishes on power loss.",
+      "case_answer_keywords": ["DOM in volatile RAM", "power loss clears RAM", "never written to non-volatile disk"],
+      "case_answer_kw_synonym": [
+        ["electrical state lost", "memory requires power", "dom in volatile ram"],
+        ["uncommitted to hard drive/ssd", "no autosave to storage", "never written to non-volatile disk"],
+        ["volatile memory wiped on shutdown", "power loss clears ram"]
+      ]
+    },
+    {
+      "ID": "CS041",
+      "concept_ID": "C05",
+      "case_scenario": "You are modeling a school system where a Student can enroll in multiple Courses, and each Course can have multiple Students. Where do you put the pointer column?",
+      "case_answer": "You cannot put it directly on either table because it is a many-to-many relationship; you must create a third junction table (e.g., Enrollments) where each row holds two foreign key pointers referencing one student_id and one course_id.",
+      "case_answer_keywords": ["many-to-many relationship", "junction table", "two foreign keys"],
+      "case_answer_kw_synonym": [
+        ["neither table directly", "m:n relation", "many-to-many relationship"],
+        ["bridge table", "associative table", "join table", "junction table"],
+        ["both columns act as pointers", "student_id and course_id", "two foreign keys"]
+      ]
+    },
+    {
+      "ID": "CS042",
+      "concept_ID": "C05",
+      "case_scenario": "One Author writes many Books, and each Book has only one Author. If you put a book_id column on the Authors table instead of author_id on Books, what happens when an author publishes their second book?",
+      "case_answer": "Either the single book_id cell on the Authors row must hold multiple values ('101, 102'), violating atomic column rules, or you must duplicate the entire Author row for every new book they write.",
+      "case_answer_keywords": ["violates atomic values", "multiple IDs in one cell", "row duplication"],
+      "case_answer_kw_synonym": [
+        ["comma-separated ids", "array in column", "breaks 1nf", "violates atomic values"],
+        ["cannot hold multiple keys in one scalar field", "multiple ids in one cell"],
+        ["redundant author rows", "data duplication", "row duplication"]
+      ]
+    },
+    {
+      "ID": "CS043",
+      "concept_ID": "C05",
+      "case_scenario": "In your Concept Check app, one initial learning Gap (attempt 1) can have multiple Retries (attempts 2, 3). Why does the parent_gap_id foreign key column sit on the Retries table instead of a retry_id column on the Gaps table?",
+      "case_answer": "Because each retry points back to exactly one single parent gap (an atomic value), whereas a single gap row would have to store an unbounded list of retry IDs as the learner makes more attempts.",
+      "case_answer_keywords": ["unbounded retry list", "one parent per retry", "atomic foreign key"],
+      "case_answer_kw_synonym": [
+        ["each retry has exactly one gap", "many-to-one", "one parent per retry"],
+        ["gap would need multiple retry ids", "growing array", "unbounded retry list"],
+        ["single scalar pointer on many side", "atomic foreign key"]
+      ]
+    },
+    {
+      "ID": "CS044",
+      "concept_ID": "C05",
+      "case_scenario": "A Department has 50 Employees. A developer puts columns emp1_id, emp2_id, ... emp10_id on the Departments table. What breaks when the department hires an 11th employee?",
+      "case_answer": "The table schema hits a hard structural ceiling, requiring an ALTER TABLE DDL migration just to insert data, whereas putting department_id on the Employees table allows infinite employees by simply inserting new rows.",
+      "case_answer_keywords": ["fixed column ceiling", "requires schema migration", "row insertion scales"],
+      "case_answer_kw_synonym": [
+        ["hardcoded column limit", "runs out of columns", "fixed column ceiling"],
+        ["alter table needed for new data", "rigid schema", "requires schema migration"],
+        ["many side adds rows without changing columns", "row insertion scales"]
+      ]
+    },
+    {
+      "ID": "CS045",
+      "concept_ID": "C05",
+      "case_scenario": "A Customer places multiple Orders. You store a comma-separated string 'ord_1, ord_2, ord_3' inside a single order_ids column on the Customers table. What breaks when you try to enforce a database FOREIGN KEY constraint or join the tables?",
+      "case_answer": "Relational database engines cannot enforce foreign key referential integrity or use B-tree indexes on substrings inside a comma-separated text field, making standard SQL joins and cascading deletes impossible.",
+      "case_answer_keywords": ["cannot index substrings", "breaks FK constraint", "unjoinable text field"],
+      "case_answer_kw_synonym": [
+        ["no referential integrity on csv string", "b-tree index fails", "cannot index substrings"],
+        ["database cannot validate multiple ids in text", "breaks fk constraint"],
+        ["string parsing required to join", "full table scan", "unjoinable text field"]
+      ]
+    },
+    {
+      "ID": "CS046",
+      "concept_ID": "C05",
+      "case_scenario": "A Blog Post has many Comments. If you put comment_id on the Posts table and duplicate the Posts row for every new comment so each row stays atomic, what breaks when the author edits the Post's title?",
+      "case_answer": "You suffer an update anomaly: the database must find and update the title across hundreds of duplicated Post rows, risking inconsistent data if any row fails to update.",
+      "case_answer_keywords": ["update anomaly", "redundant post data", "inconsistent state"],
+      "case_answer_kw_synonym": [
+        ["duplicated parent rows", "data redundancy", "redundant post data"],
+        ["must update title in multiple places", "update anomaly"],
+        ["partial update corrupts data", "normalization failure", "inconsistent state"]
+      ]
+    },
+    {
+      "ID": "CS047",
+      "concept_ID": "C05",
+      "case_scenario": "Using the same duplicated Posts table (where comment_id lives on the Posts row), what happens if a post has only 1 comment and the user deletes that comment row?",
+      "case_answer": "If deleting the comment deletes the row holding the comment_id pointer, you suffer a deletion anomaly where the entire Blog Post record is accidentally wiped out along with its last comment.",
+      "case_answer_keywords": ["deletion anomaly", "parent record lost", "coupled lifecycle"],
+      "case_answer_kw_synonym": [
+        ["deleting child deletes parent", "post wiped out", "deletion anomaly"],
+        ["cannot exist with zero comments or requires null mutation", "parent record lost"],
+        ["data loss on child removal", "coupled lifecycle"]
+      ]
+    },
+    {
+      "ID": "CS048",
+      "concept_ID": "C05",
+      "case_scenario": "A Folder contains many Files, and each File lives in exactly one Folder. If a File is moved from Folder A to Folder B, how many database rows must be modified if folder_id is on the Files table versus if file_ids arrays are stored on Folders?",
+      "case_answer": "With folder_id on Files (the many side), moving a file is an atomic single-row update (SET folder_id = 'B'); on the Folders side, you must mutate two separate rows (removing from A's array and appending to B's array).",
+      "case_answer_keywords": ["single-row atomic update", "two-row array mutation", "pointer update efficiency"],
+      "case_answer_kw_synonym": [
+        ["update one cell on child row", "single-row atomic update"],
+        ["modify both source and destination folder rows", "two-row array mutation"],
+        ["risk of file existing in two folders simultaneously", "pointer update efficiency"]
+      ]
+    },
+    {
+      "ID": "CS049",
+      "concept_ID": "C05",
+      "case_scenario": "An Invoice has many Line Items. You want to calculate the sum of all line item prices for Invoice #10. Why is SELECT SUM(price) FROM line_items WHERE invoice_id = 10 fast when the pointer is on line_items?",
+      "case_answer": "Because invoice_id sits as a scalar column on the line_items table, the database can use a B-tree index on invoice_id to jump directly to the matching child rows in O(log N) time.",
+      "case_answer_keywords": ["scalar column index", "B-tree lookup", "direct child filtering"],
+      "case_answer_kw_synonym": [
+        ["indexed foreign key", "fast where clause", "scalar column index"],
+        ["logarithmic lookup", "no string splitting", "b-tree lookup"],
+        ["efficient aggregation on child rows", "direct child filtering"]
+      ]
+    },
+    {
+      "ID": "CS050",
+      "concept_ID": "C05",
+      "case_scenario": "In a self-referencing Employees table where one Manager manages many Direct Reports, which employee row holds the manager_id pointer column, and what value does it hold?",
+      "case_answer": "Every Employee row (the 'many' side) holds a single manager_id column pointing to the id of their one Manager; a Manager has many rows pointing to them, while holding only one manager_id for their own boss.",
+      "case_answer_keywords": ["report holds manager_id", "points to single boss", "many rows reference one ID"],
+      "case_answer_kw_synonym": [
+        ["subordinate row stores pointer", "child points to parent", "report holds manager_id"],
+        ["each employee has one manager", "scalar fk", "points to single boss"],
+        ["self-join on many side", "many rows reference one id"]
+      ]
+    },
+    {
+      "ID": "CS051",
+      "concept_ID": "C06",
+      "case_scenario": "You want to track a learner's first failed attempt alongside their second successful attempt for a specific concept check. Why does updating a single text column (latest_attempt) break your ability to analyze their learning gap?",
+      "case_answer": "Overwriting the cell destroys the initial failed attempt data, meaning you lose the record of what they originally got wrong and cannot link their retry directly to the specific gap.",
+      "case_answer_keywords": ["overwrites initial data", "destroys historical state", "breaks retry-to-gap link"],
+      "case_answer_kw_synonym": [
+        ["erases first attempt", "mutates in place", "loses old value", "overwrites initial data"],
+        ["no before/after comparison", "history wiped", "destroys historical state"],
+        ["cannot point foreign key to previous state", "breaks retry-to-gap link"]
+      ]
+    },
+    {
+      "ID": "CS052",
+      "concept_ID": "C06",
+      "case_scenario": "Instead of overwriting, a developer appends every new attempt into a single text cell separated by pipes ('Attempt 1 | Attempt 2 | Attempt 3'). What breaks when you need to record the exact timestamp and pass/fail boolean for Attempt 2?",
+      "case_answer": "A single concatenated text cell cannot attach independent structured metadata columns (created_at, passed, parent_gap_id) or primary keys to individual events inside the string.",
+      "case_answer_keywords": ["no per-event metadata", "lacks individual primary key", "unstructured string concatenation"],
+      "case_answer_kw_synonym": [
+        ["cannot attach timestamp/boolean to substring", "no per-event metadata"],
+        ["no row id per attempt", "unreferencable event", "lacks individual primary key"],
+        ["pipe-delimited blob", "requires string parsing", "unstructured string concatenation"]
+      ]
+    },
+    {
+      "ID": "CS053",
+      "concept_ID": "C06",
+      "case_scenario": "A bank stores a user's account balance in a single mutable cell balance = 500 and overwrites it to balance = 400 on withdrawal without inserting a transaction row. Why can't the bank prove where the missing $100 went during a dispute?",
+      "case_answer": "Mutating the cell in place records only the final net state while erasing the causal transition event (who received the $100, when it occurred, and what the prior balance was).",
+      "case_answer_keywords": ["mutates net state only", "erases transition event", "no audit trail"],
+      "case_answer_kw_synonym": [
+        ["overwrites previous balance", "state without history", "mutates net state only"],
+        ["missing causal record", "no timestamp or recipient", "erases transition event"],
+        ["impossible to reconstruct timeline or verify math", "no audit trail"]
+      ]
+    },
+    {
+      "ID": "CS054",
+      "concept_ID": "C06",
+      "case_scenario": "Two webhook events arrive at the exact same millisecond and both try to append a status update to a single JSON array cell inside the Orders row (UPDATE orders SET history = ...). What concurrency bug occurs?",
+      "case_answer": "Both requests read the same initial cell value, append their item in memory, and write back—causing a lost update race condition where the second write completely overwrites the first webhook's addition.",
+      "case_answer_keywords": ["read-modify-write race", "lost update", "cell overwrite contention"],
+      "case_answer_kw_synonym": [
+        ["concurrent cell mutation", "last write wins", "read-modify-write race"],
+        ["second update wipes first update", "race condition", "lost update"],
+        ["insert row avoids overwriting existing data", "cell overwrite contention"]
+      ]
+    },
+    {
+      "ID": "CS055",
+      "concept_ID": "C06",
+      "case_scenario": "You want to query 'How many learners failed on their first try between 2:00 PM and 3:00 PM today?' Why is this query trivial when attempts are rows, but requires a full-table scan when history is stored in a JSON/text cell?",
+      "case_answer": "When attempts are rows, the database uses an index on the created_at and attempt_number columns; inside a cell, the engine must load and parse every user's text blob in the entire table to inspect internal values.",
+      "case_answer_keywords": ["indexed column filtering", "full-table scan on blob", "requires parsing every cell"],
+      "case_answer_kw_synonym": [
+        ["b-tree index on timestamp/status columns", "indexed column filtering"],
+        ["cannot index inside concatenated string", "full-table scan on blob"],
+        ["slow query", "unpack every row's cell", "requires parsing every cell"]
+      ]
+    },
+    {
+      "ID": "CS056",
+      "concept_ID": "C06",
+      "case_scenario": "In your Concept Check app, Attempt 3 is a retry that fixes a specific sentence flagged in Attempt 1. Why can't Attempt 3 hold a foreign key pointer (parent_gap_id) to Attempt 1 if all attempts are stored inside a single cell on the Users table?",
+      "case_answer": "Foreign keys can only reference a unique Primary Key of a discrete table row; an item buried inside a text or array cell has no table-level primary key to point to.",
+      "case_answer_keywords": ["no primary key in cell", "FK requires target row", "unaddressable element"],
+      "case_answer_kw_synonym": [
+        ["substrings have no row id", "cannot reference inside cell", "no primary key in cell"],
+        ["foreign key points to row pk", "relational integrity", "fk requires target row"],
+        ["cannot link retry -> gap structurally", "unaddressable element"]
+      ]
+    },
+    {
+      "ID": "CS057",
+      "concept_ID": "C06",
+      "case_scenario": "An e-commerce site stores an order's shipping status in a single cell status that gets overwritten from placed -> packed -> shipped -> delivered. Why can't you calculate the average time it takes for the warehouse to pack an order?",
+      "case_answer": "Overwriting the single status (and updated_at) cell destroys the timestamp of when placed transitioned to packed the moment shipped overwrites it, eliminating the time delta between intermediate steps.",
+      "case_answer_keywords": ["intermediate timestamps destroyed", "cannot compute time delta", "overwritten transition times"],
+      "case_answer_kw_synonym": [
+        ["updated_at only shows latest step", "previous times lost", "intermediate timestamps destroyed"],
+        ["no duration calculation between states", "cannot compute time delta"],
+        ["history flattened to current state", "overwritten transition times"]
+      ]
+    },
+    {
+      "ID": "CS058",
+      "concept_ID": "C06",
+      "case_scenario": "A user edits their document 1,000 times, and you append every full revision into a single revision_history column on the Documents row. How does this degrade SELECT id, title FROM documents queries that don't even need the history?",
+      "case_answer": "Bloating a single row with a massive growing cell forces the database storage engine to read across oversized data/TOAST pages, slowing down row fetches and consuming memory/locks on the main record.",
+      "case_answer_keywords": ["row bloat", "page read overhead", "locks main record"],
+      "case_answer_kw_synonym": [
+        ["oversized row size", "memory amplification", "row bloat"],
+        ["every update rewrites giant cell", "write amplification", "page read overhead"],
+        ["slows down parent table queries", "locks main record"]
+      ]
+    },
+    {
+      "ID": "CS059",
+      "concept_ID": "C06",
+      "case_scenario": "A bug in your code accidentally corrupts the latest status update. If history is stored by inserting immutable append-only rows versus mutating a single cell, how do you recover the user's state from 5 minutes ago?",
+      "case_answer": "With append-only rows, prior rows remain untouched so you simply delete the bad row or query WHERE created_at < '5 mins ago'; with a mutated cell, the prior value was overwritten in place and is unrecoverable without a full DB backup restore.",
+      "case_answer_keywords": ["append-only immutability", "prior rows untouched", "in-place mutation unrecoverable"],
+      "case_answer_kw_synonym": [
+        ["delete bad row to rollback", "query prior timestamp", "append-only immutability"],
+        ["previous state still exists as separate row", "prior rows untouched"],
+        ["overwritten cell permanently destroys old value", "in-place mutation unrecoverable"]
+      ]
+    },
+    {
+      "ID": "CS060",
+      "concept_ID": "C06",
+      "case_scenario": "A SaaS app lets users change their subscription plan. If you overwrite plan_id on the Users row instead of inserting a subscription_events row with start_date and end_date, what breaks when generating last month's invoice after a user upgrades mid-month?",
+      "case_answer": "You only know their current plan today and have lost the historical record of which days they were on the cheaper plan versus the upgraded plan during the billing cycle.",
+      "case_answer_keywords": ["lost historical interval", "cannot prorate billing", "only current state known"],
+      "case_answer_kw_synonym": [
+        ["missing start_date and end_date per plan", "lost historical interval"],
+        ["overwrote previous tier", "no timeline of changes", "cannot prorate billing"],
+        ["inaccurate past invoicing", "only current state known"]
+      ]
+    },
+    {
+      "ID": "CS061",
+      "concept_ID": "C07",
+      "case_scenario": "You are building a feature that validates whether a password meets complexity requirements before submission. Should this validation logic run exclusively on the server, or on the client (or both), and why?",
+      "case_answer": "It should run on the client for immediate UX feedback without network latency, but must also run on the server because client-side validation is untrusted and can be bypassed by sending a raw API request.",
+      "case_answer_keywords": ["both client and server", "client for instant UX", "server for trust boundary"],
+      "case_answer_kw_synonym": [
+        ["run in both places", "dual validation", "both client and server"],
+        ["zero latency feedback", "immediate ui response", "client for instant ux"],
+        ["client can be bypassed", "raw http request", "authoritative enforcement", "server for trust boundary"]
+      ]
+    },
+    {
+      "ID": "CS062",
+      "concept_ID": "C07",
+      "case_scenario": "As a user drags a color-picker slider at 60 frames per second, you want the preview box on screen to update its background color smoothly. Why must this state live on the client instead of making an API call to the backend on every pixel movement?",
+      "case_answer": "Round-trip network latency (50–200ms per HTTP call) is far slower than the 16.6ms frame budget required for 60fps UI rendering, which would cause severe visual lag and flood the server.",
+      "case_answer_keywords": ["network round-trip latency", "16ms frame budget", "immediate UI rendering"],
+      "case_answer_kw_synonym": [
+        ["http call too slow", "50-200ms delay", "network lag", "network round-trip latency"],
+        ["60fps responsiveness", "real-time dom update", "16ms frame budget"],
+        ["no trust boundary needed for visual preview", "immediate ui rendering"]
+      ]
+    },
+    {
+      "ID": "CS063",
+      "concept_ID": "C07",
+      "case_scenario": "In your Concept Check app, where must the grading comparison against the Known Answer Key live—in the frontend React code or on the backend server—and what breaks if you put it in the other place?",
+      "case_answer": "It must live on the backend server; if the Known Answer Key is shipped to the frontend to grade locally, any learner can inspect the client bundle or network tab to read the exact answers before typing.",
+      "case_answer_keywords": ["backend server only", "answer key exposure", "client inspection cheats test"],
+      "case_answer_kw_synonym": [
+        ["server-side grading", "trusted environment", "backend server only"],
+        ["shipping rubric to browser leaks answers", "answer key exposure"],
+        ["devtools inspection", "user can read static key", "client inspection cheats test"]
+      ]
+    },
+    {
+      "ID": "CS064",
+      "concept_ID": "C07",
+      "case_scenario": "You have an e-commerce catalog of 5,000,000 products and need to filter them down to the 10 cheapest items matching a search keyword. Why should this filtering live in the database query rather than fetching all rows to the browser .filter()?",
+      "case_answer": "Shipping 5 million rows over the network consumes hundreds of megabytes of bandwidth and crashes the browser's RAM, whereas the database sits next to the disk and uses memory-efficient B-tree indexes to return only 10 rows.",
+      "case_answer_keywords": ["network bandwidth exhaustion", "browser RAM crash", "database index efficiency"],
+      "case_answer_kw_synonym": [
+        ["huge payload transfer", "gigabytes over wire", "network bandwidth exhaustion"],
+        ["out of memory on client", "slow js array loop", "browser ram crash"],
+        ["db filters via index before network serialization", "database index efficiency"]
+      ]
+    },
+    {
+      "ID": "CS065",
+      "concept_ID": "C07",
+      "case_scenario": "A user toggles 'Dark Mode' on a documentation website that doesn't require an account login. Why is browser localStorage a better place for this piece of state than a backend PostgreSQL database?",
+      "case_answer": "Dark mode is a non-sensitive, device-local UI preference with zero security risk if tampered with, and reading it synchronously from localStorage prevents a flash of unstyled white content before a network call completes.",
+      "case_answer_keywords": ["non-sensitive UI preference", "synchronous local read", "no security boundary"],
+      "case_answer_kw_synonym": [
+        ["harmless if user edits", "no trust risk", "no security boundary"],
+        ["instant load", "avoids network flash/latency", "synchronous local read"],
+        ["no user account required", "device-specific state", "non-sensitive ui preference"]
+      ]
+    },
+    {
+      "ID": "CS066",
+      "concept_ID": "C07",
+      "case_scenario": "A user is editing a profile modal and opens a dropdown menu (isOpen = true). Why should isOpen live in ephemeral React state (RAM) rather than being saved to localStorage or the backend database?",
+      "case_answer": "Whether a dropdown is currently open is transient view state tied only to the current interaction moment; persisting it to storage adds pointless I/O overhead and causes annoying UI bugs if the modal reopens unexpectedly after a page refresh.",
+      "case_answer_keywords": ["transient UI state", "ephemeral RAM only", "no persistence needed"],
+      "case_answer_kw_synonym": [
+        ["temporary view state", "current session interaction", "transient ui state"],
+        ["should reset on reload", "ephemeral memory", "ephemeral ram only"],
+        ["unnecessary disk/network i/o", "no persistence needed"]
+      ]
+    },
+    {
+      "ID": "CS067",
+      "concept_ID": "C07",
+      "case_scenario": "A medical app needs to run a 4GB machine learning model that requires 16GB of VRAM to analyze an X-ray image. Why must this execution live on the backend server rather than inside the user's mobile browser?",
+      "case_answer": "Execution environment constraints: a mobile browser sandbox lacks the gigabytes of RAM/GPU hardware required and cannot force every user to download a 4GB model weight file over cellular data.",
+      "case_answer_keywords": ["hardware compute constraints", "massive download size", "browser sandbox limits"],
+      "case_answer_kw_synonym": [
+        ["client lacks gpu/ram", "low-end mobile devices", "hardware compute constraints"],
+        ["cannot ship 4gb weights over network", "massive download size"],
+        ["centralized server hardware handles heavy compute", "browser sandbox limits"]
+      ]
+    },
+    {
+      "ID": "CS068",
+      "concept_ID": "C07",
+      "case_scenario": "An online multiplayer poker game needs to shuffle a deck of 52 cards and deal 2 hidden cards to Player A and 2 hidden cards to Player B. Where must the deck array and shuffle algorithm live, and what breaks if the server sends the full shuffled deck array to both browsers?",
+      "case_answer": "The deck and shuffle must live exclusively on the backend server, with the server sending each client only their own 2 cards; sending the full deck array to the browser lets any player inspect network traffic to see their opponent's hidden cards and upcoming river cards.",
+      "case_answer_keywords": ["server holds master state", "selective data projection", "client inspects hidden state"],
+      "case_answer_kw_synonym": [
+        ["shuffle on backend", "trusted rng", "server holds master state"],
+        ["send only player's own cards", "filter payload", "selective data projection"],
+        ["full deck in browser leaks opponent's hand in devtools", "client inspects hidden state"]
+      ]
+    },
+    {
+      "ID": "CS069",
+      "concept_ID": "C07",
+      "case_scenario": "A user types into a live character counter (142 / 280 characters) while composing a post. Why should the character counting logic run on the client, while the final length rejection runs on the server?",
+      "case_answer": "Counting characters on the client gives instant keystroke-by-keystroke visual feedback with zero network latency, while the server must re-verify text.length <= 280 on submission so a user cannot POST a 10,000-character string via curl.",
+      "case_answer_keywords": ["client for zero-latency UX", "server for authoritative limit", "prevent curl bypass"],
+      "case_answer_kw_synonym": [
+        ["instant keystroke feedback", "smooth typing ui", "client for zero-latency ux"],
+        ["backend enforces hard constraint", "server for authoritative limit"],
+        ["raw api request can bypass frontend input maxlength", "prevent curl bypass"]
+      ]
+    },
+    {
+      "ID": "CS070",
+      "concept_ID": "C07",
+      "case_scenario": "Your app generates a downloadable PDF invoice stamped with 'OFFICIAL PAID RECEIPT' once Stripe confirms payment. Why must the Stripe webhook listener and PDF stamp generation live on the backend rather than awaiting Stripe's redirect in the browser?",
+      "case_answer": "A user can close their browser tab before the redirect completes (losing the event) or manually visit the /payment-success redirect URL in their browser without paying to forge a receipt; only the backend can cryptographically verify Stripe's webhook signature secret.",
+      "case_answer_keywords": ["webhook signature verification", "forged redirect URL", "browser tab closure"],
+      "case_answer_kw_synonym": [
+        ["cryptographic secret on server", "trusted callback", "webhook signature verification"],
+        ["user can visit success url directly without paying", "forged redirect url"],
+        ["reliable background processing even if client disconnects", "browser tab closure"]
+      ]
+    }
+  ]
+}
