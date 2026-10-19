@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SumJ (समझे) — Engineering Concept Mastery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <div class="app-container">
-
+    
     <!-- Top Navigation Header -->
     <header class="app-header">
       <div class="brand">
@@ -25,7 +21,23 @@
           <p class="tagline">Socratic Engineering Comprehension Engine</p>
         </div>
       </div>
-      <div class="header-badge">100x Module 2</div>
+      
+      <div class="header-right">
+        <!-- User Status Badge -->
+        <div id="user-status-badge" class="user-status-pill hidden">
+          <div class="user-info">
+            <span class="user-icon">👤</span>
+            <span id="user-display-name" class="user-name"></span>
+          </div>
+          <span id="user-sessions-tag" class="sessions-tag">3/3 left today</span>
+          <button id="btn-switch-user" class="btn-text-link" title="Switch User">Switch</button>
+        </div>
+
+        <!-- Login / Identify button when not signed in -->
+        <button id="btn-header-login" class="btn-text-link" style="font-size: 13px; font-weight: 600;">Identify Learner</button>
+
+        <div class="header-badge">100x Module 2</div>
+      </div>
     </header>
 
     <!-- Stepper Progress Tracker -->
@@ -42,18 +54,18 @@
       <div class="step-line"></div>
       <div class="step-item" id="step-nav-3">
         <div class="step-num">3</div>
-        <span>Case Challenge</span>
+        <span id="step-nav-3-label">Dual-Case Challenge</span>
       </div>
       <div class="step-line"></div>
       <div class="step-item" id="step-nav-4">
         <div class="step-num">4</div>
-        <span>Evaluation</span>
+        <span>Mastery Verdict</span>
       </div>
     </nav>
 
     <!-- Main Dynamic Container -->
     <main class="main-card">
-
+      
       <!-- STAGE 1: CONCEPT CAROUSEL -->
       <section id="stage-1" class="stage-section active">
         <div class="section-intro">
@@ -62,14 +74,14 @@
         </div>
 
         <div class="carousel-wrapper">
-          <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous concept">‹</button>
+          <button type="button" class="carousel-arrow prev" id="carousel-prev" aria-label="Previous concept">‹</button>
           <div class="carousel-track-container">
             <div class="carousel-track" id="carousel-track">
               <!-- Dynamically populated from /api/concepts -->
-              <div class="loading-state">Loading concepts...</div>
+              <div class="loading-state">Loading concepts from Supabase...</div>
             </div>
           </div>
-          <button class="carousel-arrow next" id="carousel-next" aria-label="Next concept">›</button>
+          <button type="button" class="carousel-arrow next" id="carousel-next" aria-label="Next concept">›</button>
         </div>
 
         <div class="carousel-dots" id="carousel-dots"></div>
@@ -79,7 +91,7 @@
       <section id="stage-2" class="stage-section hidden">
         <div class="active-concept-pill">
           <span class="pill-badge" id="stage2-concept-id">C01</span>
-          <span class="pill-title" id="stage2-concept-title">Why does a backend exist at all?</span>
+          <span class="pill-title" id="stage2-concept-title">Concept Question</span>
         </div>
 
         <div class="prompt-box">
@@ -87,12 +99,11 @@
             <h3>Explain this in your own words:</h3>
             <p>Avoid memorized textbook jargon. Describe the physical mechanism and trade-offs.</p>
           </label>
-          <textarea id="initial-explanation-input" rows="4"
-            placeholder="In your own words, why does this happen?"></textarea>
-
+          <textarea id="initial-explanation-input" rows="4" placeholder="In your own words, why does this happen?"></textarea>
+          
           <div class="action-row">
-            <button class="btn btn-secondary" id="btn-back-to-1">Back</button>
-            <button class="btn btn-primary" id="btn-submit-initial">
+            <button type="button" class="btn btn-secondary" id="btn-back-to-1">Back</button>
+            <button type="button" class="btn btn-primary" id="btn-submit-initial">
               <span class="btn-text">Analyze Understanding</span>
               <span class="btn-spinner hidden"></span>
             </button>
@@ -106,7 +117,7 @@
           </div>
 
           <div id="jargon-container" class="jargon-box hidden">
-            <span class="jargon-label">Detected Recitation / Fillers:</span>
+            <span class="jargon-label">⚠️ Detected Recitation (Logged for Analysis):</span>
             <div class="tags-list" id="jargon-tags"></div>
           </div>
 
@@ -127,121 +138,209 @@
             <label for="followup-input">
               <strong>Your Response to the Socratic Question:</strong>
             </label>
-            <textarea id="followup-input" rows="3"
-              placeholder="Explain the specific mechanism or edge case asked above..."></textarea>
-
-            <button class="btn btn-primary" id="btn-proceed-to-case">
-              <span>Continue to Case Challenge →</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- STAGE 3: THE REAL-WORLD CASE CHALLENGE -->
-      <section id="stage-3" class="stage-section hidden">
-        <div class="active-concept-pill">
-          <span class="pill-badge" id="stage3-concept-id">C01</span>
-          <span class="pill-title" id="stage3-concept-title">Concept Challenge</span>
-        </div>
-
-        <div class="case-card">
-          <div class="case-card-header">
-            <span class="case-badge" id="case-id-badge">CASE STUDY</span>
-            <span class="case-subtext">Real-World Engineering Scenario</span>
-          </div>
-          <p class="case-scenario-text" id="case-scenario-text">Loading scenario...</p>
-        </div>
-
-        <div class="prompt-box">
-          <label for="case-explanation-input">
-            <h3>Explain the Rationale / Mechanical Solution:</h3>
-            <p>How does the system behave, and why? Be specific about where computation happens.</p>
-          </label>
-          <textarea id="case-explanation-input" rows="5"
-            placeholder="Detail the exact sequence of events, failure modes, or architectural rationale..."></textarea>
-
-          <div class="action-row">
-            <button class="btn btn-secondary" id="btn-back-to-2">Back</button>
-            <button class="btn btn-primary" id="btn-submit-case">
-              <span class="btn-text">Submit for Dual Evaluation</span>
+            <textarea id="followup-input" rows="3" placeholder="Explain the specific mechanism or edge case asked above..."></textarea>
+            
+            <button type="button" class="btn btn-primary" id="btn-proceed-to-case">
+              <span class="btn-text">Begin Dual-Case Challenge (2 Cases) →</span>
               <span class="btn-spinner hidden"></span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- STAGE 4: DUAL EVALUATION SCORECARD -->
-      <section id="stage-4" class="stage-section hidden">
+      <!-- STAGE 3: DUAL-CASE CHALLENGE (CASE 1 & CASE 2) -->
+      <section id="stage-3" class="stage-section hidden">
+        <div class="stage-3-header-row">
+          <div class="active-concept-pill">
+            <span class="pill-badge" id="stage3-concept-id">C01</span>
+            <span class="pill-title" id="stage3-concept-title">Concept Challenge</span>
+          </div>
+          <div class="case-progress-pill" id="case-progress-indicator">Case 1 of 2</div>
+        </div>
 
+        <!-- Gap Reminder Banner (shown on Case 2 if Case 1 identified a gap) -->
+        <div id="case2-gap-banner" class="gap-reminder-banner hidden">
+          <div class="gap-icon">💡</div>
+          <div class="gap-text">
+            <strong>Closing the Gap from Case 1:</strong>
+            <p id="case2-gap-instruction"></p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="case-card-header">
+            <span class="case-badge" id="case-id-badge">CASE 1</span>
+            <span class="case-subtext" id="case-subtext-label">Real-World Engineering Scenario (1 of 2)</span>
+          </div>
+          <p class="case-scenario-text" id="case-scenario-text">Loading scenario from Supabase...</p>
+        </div>
+
+        <div class="prompt-box" id="case-input-container">
+          <label for="case-explanation-input">
+            <h3 id="case-input-heading">Explain the Rationale / Mechanical Solution for Case 1:</h3>
+            <p>Detail the failure modes, sequence of events, and architectural reasoning.</p>
+          </label>
+          <textarea id="case-explanation-input" rows="5" placeholder="Detail the exact sequence of events, failure modes, or architectural rationale..."></textarea>
+
+          <div class="action-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-to-2">Back to Concept</button>
+            <button type="button" class="btn btn-primary" id="btn-submit-case">
+              <span class="btn-text" id="btn-submit-case-text">Submit Case 1 Evaluation</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Interim Feedback Card (Shown right after Case 1 is evaluated before proceeding to Case 2) -->
+        <div id="interim-feedback-panel" class="interim-card hidden">
+          <div class="interim-header">
+            <span id="interim-status-badge" class="status-indicator"></span>
+            <h4 id="interim-title">Case 1 Evaluation Result</h4>
+          </div>
+          <p id="interim-summary" class="interim-desc"></p>
+
+          <div class="mini-eval-section" style="margin-top: 14px;">
+            <div class="eval-row">
+              <span class="eval-label">Evaluation A (Vocabulary Alignment):</span>
+              <span id="interim-evalA-status"></span>
+            </div>
+            <div class="tags-list" id="interim-tags"></div>
+          </div>
+
+          <div class="mini-eval-section" style="margin-top: 10px;">
+            <div class="eval-row">
+              <span class="eval-label">Evaluation B (Semantic Reasoning):</span>
+              <span id="interim-evalB-status"></span>
+            </div>
+            <p class="eval-notes" id="interim-notes"></p>
+          </div>
+          
+          <div class="action-row" style="margin-top: 18px;">
+            <button type="button" class="btn btn-primary" id="btn-advance-to-case2">
+              <span>Proceed to Case 2 of 2 →</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 4: COMBINED DUAL-CASE MASTERY SCORECARD -->
+      <section id="stage-4" class="stage-section hidden">
+        
         <!-- Final Mastered Banner -->
         <div id="verdict-banner" class="verdict-banner passed">
           <div class="verdict-icon" id="verdict-icon">🏆</div>
           <div class="verdict-details">
             <h2 id="verdict-title">Concept Mastered!</h2>
-            <p id="verdict-subtitle">Both keyword precision and semantic reasoning criteria satisfied.</p>
+            <p id="verdict-subtitle">Both Case 1 and Case 2 passed with verified keyword alignment and semantic reasoning.</p>
           </div>
         </div>
 
-        <!-- Dual Evaluation Grid -->
-        <div class="eval-grid">
-
-          <!-- EVALUATION A -->
-          <div class="eval-card" id="card-eval-a">
-            <div class="eval-card-header">
-              <span class="eval-tag">EVALUATION A</span>
-              <span class="status-indicator" id="eval-a-status">✅ Passed</span>
+        <!-- 2-Case Comparison Grid -->
+        <div class="two-case-scorecard-grid">
+          
+          <!-- CASE 1 SCORECARD -->
+          <div class="case-result-box" id="card-result-case1">
+            <div class="case-result-header">
+              <span class="case-badge" id="scorecard-case1-badge">CASE 1</span>
+              <span class="status-indicator" id="scorecard-case1-status">✅ Passed</span>
             </div>
-            <h4>Keyword & Synonym Alignment</h4>
-            <p class="eval-desc">Deterministic check against required concept vocabulary groups.</p>
-
-            <div class="eval-detail-block">
-              <div class="label-row">
-                <span>Matched Concepts:</span>
-                <strong id="eval-a-ratio">2/3</strong>
+            <p class="case-result-scenario" id="scorecard-case1-scenario"></p>
+            
+            <div class="mini-eval-section">
+              <div class="eval-row">
+                <span class="eval-label">Evaluation A (Vocabulary):</span>
+                <span id="scorecard-case1-evalA"></span>
               </div>
-              <div class="tags-list" id="eval-a-matched-tags"></div>
+              <div class="tags-list" id="scorecard-case1-tags"></div>
             </div>
 
-            <div class="eval-detail-block" id="eval-a-missing-block">
-              <div class="label-row">
-                <span>Missing Vocabulary Areas:</span>
+            <div class="mini-eval-section">
+              <div class="eval-row">
+                <span class="eval-label">Evaluation B (Reasoning):</span>
+                <span id="scorecard-case1-evalB"></span>
               </div>
-              <div class="tags-list missing" id="eval-a-missing-tags"></div>
+              <p class="eval-notes" id="scorecard-case1-notes"></p>
             </div>
           </div>
 
-          <!-- EVALUATION B -->
-          <div class="eval-card" id="card-eval-b">
-            <div class="eval-card-header">
-              <span class="eval-tag">EVALUATION B</span>
-              <span class="status-indicator" id="eval-b-status">✅ Passed</span>
+          <!-- CASE 2 SCORECARD -->
+          <div class="case-result-box" id="card-result-case2">
+            <div class="case-result-header">
+              <div class="case-header-left">
+                <span class="case-badge" id="scorecard-case2-badge">CASE 2</span>
+                <span class="proof-link-tag">Proof Link: retry → gap</span>
+              </div>
+              <span class="status-indicator" id="scorecard-case2-status">✅ Passed</span>
             </div>
-            <h4>Semantic Reasoning</h4>
-            <p class="eval-desc">Groq LLM deep assessment of technical causality and engineering constraints.</p>
-
-            <div class="eval-detail-block">
-              <strong>Examiner Notes:</strong>
-              <p class="eval-reasoning" id="eval-b-reasoning"></p>
+            <p class="case-result-scenario" id="scorecard-case2-scenario"></p>
+            
+            <div class="mini-eval-section">
+              <div class="eval-row">
+                <span class="eval-label">Evaluation A (Vocabulary):</span>
+                <span id="scorecard-case2-evalA"></span>
+              </div>
+              <div class="tags-list" id="scorecard-case2-tags"></div>
             </div>
 
-            <div class="eval-detail-block" id="eval-b-gaps-block">
-              <strong>Gaps Identified:</strong>
-              <ul class="gaps-list" id="eval-b-gaps-list"></ul>
+            <div class="mini-eval-section">
+              <div class="eval-row">
+                <span class="eval-label">Evaluation B (Reasoning):</span>
+                <span id="scorecard-case2-evalB"></span>
+              </div>
+              <p class="eval-notes" id="scorecard-case2-notes"></p>
             </div>
           </div>
+
         </div>
 
         <!-- Action Row -->
         <div class="scorecard-actions">
-          <button class="btn btn-secondary" id="btn-retry-case">Try Another Case for This Concept</button>
-          <button class="btn btn-primary" id="btn-restart">Explore Other Concepts</button>
+          <button type="button" class="btn btn-secondary" id="btn-retry-concept">Retry This Concept</button>
+          <button type="button" class="btn btn-primary" id="btn-restart">Explore Other Concepts</button>
         </div>
       </section>
 
     </main>
   </div>
 
+  <!-- PASSWORDLESS USER IDENTIFICATION & RATE LIMIT MODAL -->
+  <div id="auth-modal" class="modal-overlay hidden" aria-hidden="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-brand-icon">⚡</span>
+        <h3>Learner Identification</h3>
+        <p>Enter your User ID and Name to begin your mastery session.</p>
+      </div>
+
+      <form id="auth-form" class="modal-form">
+        <div class="modal-input-group">
+          <label for="input-auth-userid">User ID</label>
+          <input type="text" id="input-auth-userid" placeholder="e.g. pavs or email" autocomplete="username" required />
+          <span class="input-hint">Unique handle for your sessions & recitations audit</span>
+        </div>
+
+        <div class="modal-input-group">
+          <label for="input-auth-name">Your Full Name</label>
+          <input type="text" id="input-auth-name" placeholder="e.g. Pavan" autocomplete="name" required />
+        </div>
+
+        <!-- Error / Rate-limit Banner inside modal -->
+        <div id="modal-error-banner" class="modal-error-box hidden">
+          <span class="error-icon">⚠️</span>
+          <span id="modal-error-text">Daily limit reached.</span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-modal-submit">
+            <span class="btn-text">Start Session</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
-
 </html>
