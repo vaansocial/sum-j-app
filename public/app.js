@@ -78,7 +78,7 @@ async function refreshUserAuth(userId, name) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, name: name })
     });
-    
+
     if (res.status === 429) {
       const data = await res.json();
       if (currentUser) {
@@ -88,9 +88,9 @@ async function refreshUserAuth(userId, name) {
       }
       return false;
     }
-    
+
     if (!res.ok) throw new Error("Auth failed");
-    
+
     const data = await res.json();
     currentUser = {
       user_id: data.user_id,
@@ -277,7 +277,7 @@ async function selectConcept(concept) {
         concept_id: concept.ID
       })
     });
-    
+
     if (res.status === 429) {
       const data = await res.json();
       if (currentUser) {
@@ -289,7 +289,7 @@ async function selectConcept(concept) {
       showRateLimitExceeded(data.detail);
       return;
     }
-    
+
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.detail || "Failed to start review session");
@@ -435,8 +435,8 @@ function loadCaseUI(caseNum) {
   document.getElementById("case-subtext-label").textContent = `Real-World Engineering Scenario (${caseNum} of 2)`;
   document.getElementById("case-scenario-text").textContent = currentCase.case_scenario;
   document.getElementById("case-input-heading").textContent = `Explain the Rationale / Solution for Case ${caseNum}:`;
-  document.getElementById("btn-submit-case-text").textContent = (caseNum === 1) 
-    ? "Submit Case 1 Evaluation" 
+  document.getElementById("btn-submit-case-text").textContent = (caseNum === 1)
+    ? "Submit Case 1 Evaluation"
     : "Submit Case 2 & Final Evaluation";
 
   // Reset inputs & hide interim cards
@@ -447,7 +447,7 @@ function loadCaseUI(caseNum) {
   // Show gap context on Case 2 if Case 1 identified a gap (Proof Link Context)
   const gapBanner = document.getElementById("case2-gap-banner");
   if (caseNum === 2 && case1Result && case1Result.identified_gap) {
-    document.getElementById("case2-gap-instruction").textContent = 
+    document.getElementById("case2-gap-instruction").textContent =
       `In Case 1, a conceptual gap was identified: "${case1Result.identified_gap}". Make sure your rationale for Case 2 explicitly addresses this constraint!`;
     gapBanner.classList.remove("hidden");
   } else {
@@ -575,7 +575,7 @@ function renderDualScorecard() {
   c1Status.className = `status-indicator ${case1Result.case_passed ? "passed" : "failed"}`;
   document.getElementById("scorecard-case1-scenario").textContent = challengeCases.case_1.case_scenario;
   document.getElementById("scorecard-case1-evalA").textContent = `${case1Result.evaluation_a.matched_count}/${case1Result.evaluation_a.total_required} groups`;
-  
+
   const c1Tags = document.getElementById("scorecard-case1-tags");
   const c1Matched = (case1Result.evaluation_a.matched_terms || []).map(t => `<span class="tag success">✓ ${t}</span>`).join("");
   const c1Missing = (case1Result.evaluation_a.missing_concepts || []).map(m => `<span class="tag missing">✗ ${m}</span>`).join("");
@@ -591,7 +591,7 @@ function renderDualScorecard() {
   c2Status.className = `status-indicator ${case2Result.case_passed ? "passed" : "failed"}`;
   document.getElementById("scorecard-case2-scenario").textContent = challengeCases.case_2.case_scenario;
   document.getElementById("scorecard-case2-evalA").textContent = `${case2Result.evaluation_a.matched_count}/${case2Result.evaluation_a.total_required} groups`;
-  
+
   const c2Tags = document.getElementById("scorecard-case2-tags");
   const c2Matched = (case2Result.evaluation_a.matched_terms || []).map(t => `<span class="tag success">✓ ${t}</span>`).join("");
   const c2Missing = (case2Result.evaluation_a.missing_concepts || []).map(m => `<span class="tag missing">✗ ${m}</span>`).join("");

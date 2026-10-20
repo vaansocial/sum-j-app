@@ -64,8 +64,8 @@ Respond ONLY with valid JSON:
     response.raise_for_status()
     return json.loads(response.json()["choices"][0]["message"]["content"])
 
-# Helper: Evaluation A (Keywords & Synonyms unified)
-def evaluate_keywords(user_explanation: str, case_data: dict, min_matches: int = 2) -> dict:
+# Helper: Evaluation A (Keywords & Synonyms unified with lenient matching)
+def evaluate_keywords(user_explanation: str, case_data: dict, min_matches: int = 1) -> dict:
     explanation_lower = user_explanation.lower()
     
     canonical_keywords = case_data.get("case_answer_keywords", [])
@@ -75,6 +75,19 @@ def evaluate_keywords(user_explanation: str, case_data: dict, min_matches: int =
     
     matched_groups = []
     unmatched_groups = []
+
+    def matches_term(term: str, text: str) -> bool:
+        t = term.lower().strip()
+        if not t:
+            return False
+        # Direct substring match
+        if t in text:
+            return True
+        # Flexible multi-word token match (words can appear reordered)
+        words = [w for w in t.split() if len(w) > 2]
+        if len(words) >= 2 and all(w in text for w in words):
+            return True
+        return False
 
     for i in range(total_groups):
         cluster_terms = set()
@@ -89,7 +102,7 @@ def evaluate_keywords(user_explanation: str, case_data: dict, min_matches: int =
                 cluster_terms.add(term)
 
         # Check for matches
-        found_words = [term for term in cluster_terms if term.lower() in explanation_lower]
+        found_words = [term for term in cluster_terms if matches_term(term, explanation_lower)]
         
         canonical_label = (
             canonical_keywords[i] if i < len(canonical_keywords) 
@@ -101,7 +114,7 @@ def evaluate_keywords(user_explanation: str, case_data: dict, min_matches: int =
         else:
             unmatched_groups.append(canonical_label)
 
-    passed = len(matched_groups) >= min_matches
+    passed = len(matched_groups) >= min_matches if total_groups > 0 else True
     return {
         "passed": passed,
         "matched_count": len(matched_groups),
